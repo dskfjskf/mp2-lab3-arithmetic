@@ -81,7 +81,7 @@ ValType Stack<ValType>::peek() const
 template<class ValType>							// Проверка на пустоту
 bool Stack<ValType>::empty() const
 {
-	return top==-1
+	return top == -1;
 }
 
 
