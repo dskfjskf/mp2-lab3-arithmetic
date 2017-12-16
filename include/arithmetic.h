@@ -9,7 +9,22 @@ struct lexem
 {
 	string str; 
 	lexemtype lt;
+
+	lexem(string istr = "", lexemtype ilt = OPERATOR)
+	{
+		str = istr;
+		lt = ilt;
+	}
+
+	bool operator!=(const lexem& lop)
+	{
+		bool res = false;
+		if (lop.str != str || lop.lt != lt)
+			res = true;
+		return res;
+	}
 };
+
 
 class arithmetic
 {		
@@ -26,8 +41,10 @@ public:
 	bool Check();
 	double Cal();//Вычислениие
 	arithmetic(const string& istr);
+	arithmetic& operator=(const arithmetic& a);
 	~arithmetic() { delete[] pL; }
 	
+	int RPN_test(lexem* pLex) { return RPN(pLex); }
 };
 
 void arithmetic::parse()
@@ -78,7 +95,7 @@ bool arithmetic::Check_S()
 			k = 0;
 			if (res)
 			{
-				cout << "Symbol:"<< endl;
+				cout << "Unaccessible symbols:"<< endl;
 				res = false;
 			}
 			cout << ' ' << pL[i].str << endl;
@@ -94,7 +111,7 @@ bool arithmetic::Check_S()
 			{
 				if (res)
 				{
-					cout << "Symbol:" << endl;
+					cout << "Unaccessible symbols:" << endl;
 					res = false;
 				}
 				cout << ' ' << pL[i].str << endl;
@@ -148,6 +165,11 @@ bool arithmetic::Check_С()
 		res = false;
 		cout << "No operand before 1" <<  endl;
 	}
+	if (pL[inputStr.length()-1].lt==OPERATOR)
+	{
+		res = false;
+		cout << "No operand after:" << inputStr.length()<< endl;
+	}
 	for (int i = 0; i < nL - 1; i++)
 	{
 		pos += pL[i].str.length();
@@ -165,7 +187,7 @@ bool arithmetic::Check_С()
 		{
 			cout << "No operand between:" << pos + 1 << "and" << pos + 2 << endl;
 			res = false;
-		}
+		}	
 	}
 	return res;
 }
@@ -289,3 +311,13 @@ arithmetic::arithmetic(const string& istr)
 		parse();
 	}
 
+arithmetic& arithmetic::operator=(const arithmetic& a)
+{
+	inputStr= a.inputStr;
+	nL = a.nL;
+	delete[] pL;
+	pL = new lexem[nL];
+	for (int i = 0; i < nL; i++)
+		pL[i] = a.pL[i];
+	return *this;
+}
